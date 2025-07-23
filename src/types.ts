@@ -1,58 +1,62 @@
-export type Schema = StringSchema | NumberSchema | IntegerSchema | BooleanSchema | ArraySchema | ObjectSchema | NullSchema | RefSchema | AnyOfSchema
-
-export type BaseSchema<T> = {
-  title?: string
-  description?: string
-  const?: T
-  enum?: T[]
+export interface BaseSchema {
+  title?: string;
+  description?: string;
+  default?: any;
 }
 
-export type StringSchema = BaseSchema<string> & {
-  type: 'string'
-  pattern?: string
-  format?: string
+export interface StringSchema extends BaseSchema {
+  type: 'string';
+  enum?: string[];
+  pattern?: string;
+  minLength?: number;
+  maxLength?: number;
 }
 
-export type NumberSchema = BaseSchema<number> & {
-  type: 'number'
-  multipleOf?: number
-  maximum?: number
-  exclusiveMaximum?: number
-  minimum?: number
-  exclusiveMinimum?: number
+export interface NumberSchema extends BaseSchema {
+  type: 'number';
+  minimum?: number;
+  maximum?: number;
 }
 
-export type IntegerSchema = Omit<NumberSchema, 'type'> & {
-  type: 'integer'
+export interface IntegerSchema extends BaseSchema {
+  type: 'integer';
+  minimum?: number;
+  maximum?: number;
 }
 
-export type BooleanSchema = BaseSchema<boolean> & {
-  type: 'boolean'
+export interface BooleanSchema extends BaseSchema {
+  type: 'boolean';
 }
 
-export type ObjectSchema = BaseSchema<Record<string, any>> & {
-  type: 'object'
-  properties: Record<string, Schema>
-  required: string[]
-  additionalProperties: boolean
-  $defs?: Record<string, Schema>
+export interface ObjectSchema extends BaseSchema {
+  type: 'object';
+  properties: Record<string, Schema>;
+  required?: string[];
+  additionalProperties?: boolean;
+  $defs?: Record<string, Schema>;
 }
 
-export type ArraySchema = BaseSchema<any[]> & {
-  type: 'array'
-  items: Schema
-  minItems?: number
-  maxItems?: number
+export interface ArraySchema extends BaseSchema {
+  type: 'array';
+  items: Schema;
+  minItems?: number;
+  maxItems?: number;
 }
 
-export type NullSchema = {
-  type: 'null'
+export interface RefSchema {
+  $ref: string;
 }
 
-export type RefSchema = {
-  $ref: string
+export interface AnyOfSchema {
+  anyOf: Schema[];
 }
 
-export type AnyOfSchema = {
-  anyOf: Schema[]
-}
+export type Schema =
+  | StringSchema
+  | NumberSchema
+  | IntegerSchema
+  | BooleanSchema
+  | ObjectSchema
+  | ArraySchema
+  | RefSchema
+  | AnyOfSchema;
